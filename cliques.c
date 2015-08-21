@@ -142,7 +142,7 @@ get_cliques(int thread)
   
   if(thread == 1)
     {
-      w_file = fopen("output1.txt", "w");
+      w_file = fopen("output1.csv", "w");
       P = P1;
       I = I1;
       //i = 1;
@@ -151,7 +151,7 @@ get_cliques(int thread)
    }   
    else
     {
-      w_file = fopen("output2.txt", "w");
+      w_file = fopen("output2.csv", "w");
       P = P2;
       I = I2;
       //i = V_IN_CLIQUE_POTENTIAL[0] / 2  + 1;

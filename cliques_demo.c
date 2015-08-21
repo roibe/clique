@@ -1,21 +1,19 @@
 
 #include "cliques.h"
 
-void *threadFunc(void *arg){get_cliques(atoi((char*)arg));return NULL;}
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  pthread_t thread1, thread2;
-  clock_t t1;
-  construct(argc, argv);
-  t1 = clock();
-  pthread_create(&thread1, NULL, threadFunc, "1");
-  pthread_create(&thread2, NULL, threadFunc, "2");
+  int action;
+  int result;
+
+  if(argc == 6)//if calculate |max clique|
+    action = action_calculate_max_clique;
+  else
+    action = action_get_cliques;
   
-  pthread_join(thread1, NULL /* void ** return value could go here */);
-  pthread_join(thread2, NULL /* void ** return value could go here */);
-printf("Alg: %lf  ms\n", (double) (clock()-t1)/1000);
-  free_all();
-  
+  result = start(action, argc, argv);
+
+  if(action == action_calculate_max_clique) printf("|Max_Clique| = %d\n", result);
+   
   return 0;
 }

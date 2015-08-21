@@ -13,7 +13,7 @@ INDICATOR= 0.8
 LOWER_BOUND= 25
 UPPER_BOUND= 25
 GET_MAX= Calculate_Max_Clique
-INPUT_FILE= test1.txt
+INPUT_FILE= test1.csv
 ## for valgrind leak check 
 #VALGRIND = valgrind --leak-check=full -v
 

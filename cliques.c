@@ -1,5 +1,5 @@
 
-#include "clique.h"
+#include "cliques.h"
 #define MAX_SIZE_FILE 500000
 
 static int SIZE_FILE=0;
@@ -115,7 +115,7 @@ get_cliques(int** R, int** P, int ** I, int argc, char** argv, int* rows_clique_
     {
       printf("Computing all cliques of size[%d,%d] based on %d edges graph, this may take a while\n", n, m, E);
       
-      w_file = fopen("output.txt", "w");
+      w_file = fopen("output.csv", "w");
       if(w_file == NULL) printf("not open w_file\n");
 
       fprintf(w_file, "All Cliques: file [min max] TH,test1.csv,%d, %d, %lf\n", n, m, indicator);

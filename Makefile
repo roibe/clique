@@ -1,22 +1,14 @@
 #########################################################
-## Authors
+# User Section - Choose arguments to the program
 #########################################################
-#Roi Benita
-#Ariel Hazan
-#Daniel Blank
-#Netanel Ben-Haim
-
-#########################################################
-# Choose arguments to the program
-#########################################################
-INDICATOR= 0.9
+THRESHOLD_VALUE= 0.9
 LOWER_BOUND= 5
 UPPER_BOUND= 8
 INPUT_FILE= $(INPUT_FILE_1)
 #yes or no
 CALCULATE_|MAX_CLIQUE|=no
 RUN_GTEST=yes
-MEMORY_LEAK_CHECK=yes
+MEMORY_LEAK_CHECK=no
 
 #########################################################
 # Input Files
@@ -37,13 +29,13 @@ RUNGTEST= $(VALGRIND) ./$(GTEST) gtest_test1.csv 0.9 5 8 $(CALCULATE_MAX_CLIQUE)
 endif
 
 ifeq ($(CALCULATE_|MAX_CLIQUE|),yes)
-CALCULATE_MAX_CLIQUE= Calculate_Max_Clique
+CALCULATE_MAX_CLIQUE= yes
 CREATE_FILE=
 DELETE_TMP_FILE=
 else
 CALCULATE_MAX_CLIQUE= 
-CREATE_FILE= cp output.csv $(INPUT_FILE)_$(INDICATOR)_$(LOWER_BOUND)_$(UPPER_BOUND).csv
-#MOVE_FILE= mv $(INPUT_FILE)_$(INDICATOR)_$(LOWER_BOUND)_$(UPPER_BOUND).csv output_files
+CREATE_FILE= cp output.csv $(INPUT_FILE)_$(THRESHOLD_VALUE)_$(LOWER_BOUND)_$(UPPER_BOUND).csv
+#MOVE_FILE= mv $(INPUT_FILE)_$(THRESHOLD_VALUE)_$(LOWER_BOUND)_$(UPPER_BOUND).csv output_files
 DELETE_TMP_FILE= rm output.csv
 endif
 
@@ -82,7 +74,7 @@ HEADERFILES= cliques.h
 # Actions
 ##########################################################
 all: $(EXE) $(GTEST)
-	time $(VALGRIND) ./$(EXE) $(INPUT_FILE) $(INDICATOR) $(LOWER_BOUND) $(UPPER_BOUND) $(CALCULATE_MAX_CLIQUE)
+	time $(VALGRIND) ./$(EXE) $(INPUT_FILE) $(THRESHOLD_VALUE) $(LOWER_BOUND) $(UPPER_BOUND) $(CALCULATE_MAX_CLIQUE)
 	$(CREATE_FILE)
 	$(MOVE_FILE)
 	$(RUNGTEST)

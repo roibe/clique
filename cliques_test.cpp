@@ -4,7 +4,8 @@ extern "C"
 }
 #include "gtest/gtest.h"
 
-int RESULT, ACTION;
+int CALCULATE_MAX_CLIQUE, GET_CLIQUES;
+int RESULT;
 int VERTICES= 1728;
 int INDICATOR;
 int CONNECT= 1;
@@ -12,13 +13,11 @@ int DISCONNECT= 0;
 
 int
 main(int argc, char** argv)
-{ 
-  if(argc == 6)
-    ACTION = action_calculate_max_clique;
-  else
-    ACTION = action_get_cliques;
+{
+  CALCULATE_MAX_CLIQUE = argc == 6;
+  GET_CLIQUES = (! CALCULATE_MAX_CLIQUE);
   
-  RESULT = start(ACTION, argc, argv);
+  RESULT = start(argc, argv);
 
   INDICATOR = atoi(argv[2]);
   
@@ -28,20 +27,20 @@ main(int argc, char** argv)
 
 TEST(clique, get_max_clique)
 {
-  if(ACTION == action_calculate_max_clique)
+  if(CALCULATE_MAX_CLIQUE)
     ASSERT_EQ(RESULT, 8);
 }
 
 TEST(clique, get_cliques)
 {
-  if(ACTION == action_get_cliques)
+  if(GET_CLIQUES)
     ASSERT_EQ(RESULT, 438);
 }
 
 
 TEST(clique, check_cliques)
 {
-  if(ACTION == action_get_cliques)
+  if(GET_CLIQUES)
     {
       FILE* pfile;
       char c=' ';

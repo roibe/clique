@@ -1,30 +1,41 @@
 
+/***Authors:*******
+ *Roi Benita
+ *Ariel Hazan
+ *Daniel Blank
+ *Netanel Ben-Haim
+ *****************/
 #include "cliques.h"
 #define MAX_SIZE_FILE 500000
 
-int EGDES, VERTICES, LOWER_BOUND, UPPER_BOUND, R_UPPER_BOUND;
-double INDICATOR;
-int **G, ***I, ***P, *V;
+int EGDES, VERTICES, LOWER_BOUND, UPPER_BOUND, ORIGINAL_UPPER_BOUND;
+double THRESHOLD_VALUE;
+int **G, ***I, ***P, *V; //G for Graph, I for Intersection, P for Pointers, V for Vertices in clique potential
 int SIZE_FILE, MAX_CLIQUE_POTENTIAL, MAX_CLIQUE, CALCULATE_MAX_CLIQUE;
+FILE* pfile; //will point to cliques output file
+int argc;
+char **argv;
 pthread_mutex_t mutex;
 int THREAD;
-FILE* pfile;
+functiontype thread_function;
 
 //pthread_barrier_t barr;
 
 int
-start(int get_max_clique, int argc, char **argv)
+start(int _argc, char **_argv)
 {
   pthread_t *threads;
   int nthreads;
   int i;
-  int calculate_max_clique = get_max_clique;
   
-  if( (nthreads = construct(argc, argv)) > 0 )
+  argc = _argc;
+  argv = _argv;
+  
+  if( (nthreads = construct()) > 0 )
     {
       check_alloc( (threads = (pthread_t*) malloc(sizeof(pthread_t)*(nthreads+1))) );
       for(i=1; i <= nthreads; i++)
-	pthread_create(&(threads[i]), NULL, thread_function, &calculate_max_clique);
+	pthread_create(&(threads[i]), NULL, thread_function, NULL);
       
       for(i=1; i <= nthreads; i++)
 	pthread_join(threads[i], NULL /* void ** return value could go here */);
@@ -32,29 +43,21 @@ start(int get_max_clique, int argc, char **argv)
   free_all();
   if(nthreads) free(threads);
 
-  if(calculate_max_clique) return MAX_CLIQUE;
+  if(CALCULATE_MAX_CLIQUE) return MAX_CLIQUE;
   else return SIZE_FILE;
 }
 
-void
-*thread_function(void *arg)
-{
-  if(*((int*)arg)) get_max_clique();
-  else get_cliques();
-  return NULL;
-}
-
 int
-construct(int argc, char **argv)
+construct()
 {
   int i, j;
   
-  init_parameters(argc, argv);
+  init_parameters();
 
   for(i=0; argv[1][i+1] != '\0'; i++)
       ;
-  if(argv[1][i] == 'v') read_from_csv_file(argv);
-  else read_from_dot_file(argv);
+  if(argv[1][i] == 'v') read_from_csv_file();
+  else read_from_dot_file();
 
   check_alloc( P = (int***) malloc(sizeof(int**)*(V[0]+1)) );
   check_alloc( I = (int***) malloc(sizeof(int**)*(V[0]+1)) );
@@ -77,30 +80,40 @@ construct(int argc, char **argv)
 }
 
 void
-check_alloc(void* arg){ if(!arg){ printf("Error, out of space\n");exit(1);}}
+check_alloc(void* arg)
+{
+  if(!arg)
+    {
+      printf("Error, out of space\n");
+      exit(1);
+    }
+}
 
 void
-init_parameters(int argc, char **argv)
+init_parameters()
 {
   MAX_CLIQUE_POTENTIAL = 1;
   MAX_CLIQUE = 2;
   EGDES = 0;
   VERTICES = 0;
   THREAD = 0;
-  sscanf(argv[2], "%lf", &INDICATOR);
+  sscanf(argv[2], "%lf", &THRESHOLD_VALUE);
   LOWER_BOUND = atoi(argv[3]);
-  R_UPPER_BOUND = UPPER_BOUND = atoi(argv[4]);
+  ORIGINAL_UPPER_BOUND = UPPER_BOUND = atoi(argv[4]);
+  thread_function = &get_max_clique;
   if(!(CALCULATE_MAX_CLIQUE = argc == 6))
     {
+      thread_function = &get_cliques;
+      
       if( !(pfile = fopen("output.csv", "w")) ){ printf("Error, cannot open output file");exit(1);}
       
-      fprintf(pfile, "All Cliques: file [min max] TH,%s ,%d, %d, %lf\n", argv[1], LOWER_BOUND, UPPER_BOUND, INDICATOR);
+      fprintf(pfile, "All Cliques: file [min max] TH,%s ,%d, %d, %lf\n", argv[1], LOWER_BOUND, UPPER_BOUND, THRESHOLD_VALUE);
       fprintf(pfile, "index, edge, clique size, c0, c1, c2, c3, c4,  c5, c6, c7, c8, c9\n");
     }
 }
 
 void
-read_from_csv_file(char** argv)
+read_from_csv_file()
 {
   FILE* r_pfile;
   char comma;
@@ -137,7 +150,7 @@ read_from_csv_file(char** argv)
       for(j=1,k=1; j <= VERTICES; j++)
 	{
 	  fscanf(r_pfile, "%lf%c", &value, &comma); 
-	  if(j > i && value >= INDICATOR) G[i][k++] = j;
+	  if(j > i && value >= THRESHOLD_VALUE) G[i][k++] = j;
 	}
       G[i][0] = k-1;
       G[i][k] = 0;
@@ -162,7 +175,7 @@ read_from_csv_file(char** argv)
 }
 
 void
-get_max_clique()
+*get_max_clique()
 {
   int **P_t;
   int **I_t;
@@ -180,7 +193,7 @@ get_max_clique()
   P_t = P[i];
   I_t = I[i];
 
-  if(G[V[i]][0] < MAX_CLIQUE) return;
+  if(G[V[i]][0] < MAX_CLIQUE) return NULL;
 
   for(k=0; k <= G[V[i]][0] +1 ; k++)
      I_t[1][k] = G[V[i]][k];
@@ -194,20 +207,20 @@ get_max_clique()
     {	  	
       last_ptr = P_t[k];
       if(k + I_t[k][0]  <= MAX_CLIQUE)
-	{
+	{//not potential
 	  if(k == 1) break;
 	  P_t[--k]++;
 	  I_t[k][0]--;
 	  continue;
 	}
       if(k + G[*last_ptr][0] < MAX_CLIQUE)
-	{
+	{//not potential
 	  P_t[k]++;
 	  I_t[k][0]--;
 	  continue;
 	}
       if(intersection(I_t[++k], last_ptr, G[*last_ptr] +1))
-	{
+	{//potential
 	  P_t[k] = &(I_t[k][1]);
 	  
 	  pthread_mutex_lock(&mutex);    
@@ -216,10 +229,11 @@ get_max_clique()
 	}
     }
   //  printf("thread %d end\n",i);
+  return NULL;
 }  
 
 void 
-get_cliques()
+*get_cliques()
 {
   int **P_t;
   int **I_t;
@@ -254,20 +268,20 @@ get_cliques()
       last_ptr = P_t[k];
       
       if(*(last_ptr) == 0 || k + I_t[k][0] < LOWER_BOUND || k+1 == upper_bound)
-	{
+	{//not potential
 	    if(k == 1) break;
 	    P_t[--k]++;
 	    I_t[k][0]--;
 	    continue;
 	}
       if(G[*last_ptr][0] == 0 || k+1 + G[*last_ptr][0] < LOWER_BOUND)
-	{  
+	{//not potential  
 	  P_t[k]++;
 	  I_t[k][0]--;
 	  continue;
 	}
       if(! intersection(I_t[++k], last_ptr, G[*last_ptr] +1)) //empty set
-	{
+	{//not potential
 	  P_t[--k]++;
 	  I_t[k][0]--;
 	  continue;
@@ -279,17 +293,18 @@ get_cliques()
 	  if(SIZE_FILE < MAX_SIZE_FILE)//limit the file size
 	    {
 	      pthread_mutex_lock(&mutex);    
-	      clique_to_file(P_t, k);//cliue...to file [*p[0], *p[1], *p[2], ...] clique size = k+1
+	      write_clique_to_file(P_t, k);//cliue...to file [*p[0], *p[1], *p[2], ...] clique size = k+1
 	      pthread_mutex_unlock(&mutex);
 	    }
 	  else break;	  
 	}
     }
   //  printf("thread %d end\n",i);
+  return NULL;
 }
 
 int
-intersection(int* des,const int* src1,const int* src2)
+intersection(int* des, const int* src1, const int* src2)
 {
   int i=0,j=0,k=1;
  
@@ -314,7 +329,7 @@ intersection(int* des,const int* src1,const int* src2)
 }
 
 void 
-clique_to_file(int **P, int k)
+write_clique_to_file(int **P, int k)
 {
   int j,x=0;
   while(*(P[k]+x)!=0)
@@ -336,10 +351,12 @@ print_results()
       fprintf(pfile,"%c", '\0');
       fclose(pfile);
       if(SIZE_FILE < MAX_SIZE_FILE)
-	printf("There are %d cliques of size[%d,%d] with indicator %lf\n", SIZE_FILE, LOWER_BOUND, R_UPPER_BOUND, INDICATOR);
+	printf("There are %d cliques of size[%d,%d] with threshold value %lf\n", SIZE_FILE, LOWER_BOUND, ORIGINAL_UPPER_BOUND, THRESHOLD_VALUE);
       else
-	printf("There are more then %d cliques of size[%d,%d] with indicator %lf (which is the limit output file size, see src file)\n", MAX_SIZE_FILE, LOWER_BOUND, R_UPPER_BOUND, INDICATOR);
+	printf("There are more then %d cliques of size[%d,%d] with threshold value %lf (which is the limit output file size, see src file)\n", MAX_SIZE_FILE, LOWER_BOUND, ORIGINAL_UPPER_BOUND, THRESHOLD_VALUE);
     }
+  else
+    printf("|Max_Clique| = %d\n", MAX_CLIQUE);
 }
  
 void
@@ -369,7 +386,7 @@ free_all()
 }
 
 void
-read_from_dot_file(char** argv)
+read_from_dot_file()
 {
   FILE* r_pfile;
   char c;
@@ -428,7 +445,7 @@ read_from_dot_file(char** argv)
 	  while(c != '=');
 	  
 	  fscanf(r_pfile, "%lf", &value);
-	  if(value >= INDICATOR) G[i][k++] = j;
+	  if(value >= THRESHOLD_VALUE) G[i][k++] = j;
 
 	  do fscanf(r_pfile, "%c", &c);
 	  while(c != '\n');

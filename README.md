@@ -84,7 +84,7 @@ This project is part of an exercise in Software Structure course in Ariel Univer
 5. Create new Pull Request
 
 ##License
-Non.
+None.
 
 
 

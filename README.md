@@ -62,6 +62,23 @@ To save memory, we used pointers which point to the vertices in the clique.
 - Final Version: This version was implemented using multi-threads, which made an outstanding change in runtime in comparison to the previous versions, though consuming more memory.
 The upper bound of this version, in terms of memory space, is O(|V|^3*sizeof(int)).
 
+### Time comparison
+threshold value= 0.74 , range= [20,25]
+- multi_threads / two_threads / no_threads implementations 0.8 sec
+- JAVA code 22.5 sec
+
+threshold value= 0.55 , range= [48,50]
+- multi_threads 4.3 sec
+- two_threads 68 sec
+- no_threads 103 sec
+- JAVA code: out of space exception
+
+threshold value= 0.55 , calculate |Max clique|
+- multi_threads 0.88 sec
+- two_threads 5.6 sec
+- no_threads 11.5 sec
+- JAVA code: not implement calculate |Max clique|, so input range [|max_clique|,|max_clique|] (|max_clique|= 40). Out of space exception.
+
 ##Known Issues
 If you discover any bugs, feel free to create an issue on GitHub fork and send us a pull request.
 

@@ -7,8 +7,8 @@ UPPER_BOUND= 8
 INPUT_FILE= $(INPUT_FILE_1)
 #yes or no
 CALCULATE_|MAX_CLIQUE|=no
-RUN_GTEST=yes
-MEMORY_LEAK_CHECK=yes
+RUN_GTEST=no
+MEMORY_LEAK_CHECK=no
 
 #########################################################
 # Input Files

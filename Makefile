@@ -1,14 +1,14 @@
 #########################################################
 # User Section - Choose arguments to the program
 #########################################################
-THRESHOLD_VALUE= 0.9
-LOWER_BOUND= 5
-UPPER_BOUND= 8
+THRESHOLD_VALUE= 0.53
+LOWER_BOUND= 23
+UPPER_BOUND= 24
 INPUT_FILE= $(INPUT_FILE_1)
 #yes or no
-CALCULATE_|MAX_CLIQUE|=no
-RUN_GTEST=yes
-MEMORY_LEAK_CHECK=yes
+CALCULATE_|MAX_CLIQUE|=yes
+RUN_GTEST=no
+MEMORY_LEAK_CHECK=no
 
 #########################################################
 # Input Files

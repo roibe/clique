@@ -132,8 +132,6 @@ read_from_csv_file()
       VERTICES++;
     }
   while(comma == ',');
- 
-  //if Vertices == 1 !!!!!!
 
   check_alloc( V = (int*) malloc(sizeof(int)*(VERTICES+1)) );
     
@@ -399,7 +397,7 @@ read_from_dot_file()
 
   if( !(r_pfile = fopen(argv[1], "r")) ){ printf("Error, cannot open input file\n");exit(1);}
 
-  //title
+  //skip title
   do
     {
       fscanf(r_pfile, "%c", &c);
@@ -416,8 +414,6 @@ read_from_dot_file()
       while(c != '\n');
     }
   while(i == 1);
-  
-  //if V == 0 !!!!!!
 
   check_alloc( V = (int*) malloc(sizeof(int)*(VERTICES+1)) );
     
@@ -428,7 +424,7 @@ read_from_dot_file()
 
   rewind(r_pfile);
 
-  //title
+  //skip title
   do
     {
       fscanf(r_pfile, "%c", &c);

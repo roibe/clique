@@ -109,8 +109,3 @@ TEST(clique, check_clique)
     }	
 }
 */
-
-// 
-//  ASSERT_STREQ("0", str = HNum_toString(hnum));
-//  ASSERT_TRUE(rFile!=NULL);
-//  ASSERT_NE(0, HNum_isEqual(small, big));

@@ -8,14 +8,14 @@ INPUT_FILE= $(INPUT_FILE_1)
 #yes or no
 CALCULATE_|MAX_CLIQUE|=no
 RUN_GTEST=yes
-MEMORY_LEAK_CHECK=no
+MEMORY_LEAK_CHECK=yes
 
 #########################################################
 # Input Files
 #########################################################
 INPUT_FILE_1= test1.csv
-INPUT_FILE_2= g10.dot
-INPUT_FILE_3= test1.dot
+INPUT_FILE_2= graph_10V.dot
+INPUT_FILE_3= graph_2000V.dot
 
 #########################################################
 # Check passed arguments

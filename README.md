@@ -25,7 +25,9 @@ On the top of the makefile there is the user argument section for edit: Threshol
 Calculate |max clique| and run program tests available by type **yes/no** in this section. 
 After passed wanted arguments, run through **$make** command.
 
-*note:* for gtest and memory leak check, **$make installonce** command is needed.
+*note:* 
+- for gtest and memory leak check, **$make installonce** command is needed.
+- for Windows users see [pthread for Windows](http://www.sourceware.org/pthreads-win32/) since the pthread.h header file is for UNIX systems.
 
 ## Usage
 [Clique Applications - Wikipedia](https://en.wikipedia.org/wiki/Clique_(graph_theory)#Applications)

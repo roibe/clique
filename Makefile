@@ -29,7 +29,7 @@ RUNGTEST= $(VALGRIND) ./$(GTEST) gtest_test1.csv 0.9 5 8 $(CALCULATE_MAX_CLIQUE)
 endif
 
 ifeq ($(CALCULATE_|MAX_CLIQUE|),yes)
-CALCULATE_MAX_CLIQUE= calculating |Max clique|
+CALCULATE_MAX_CLIQUE= calculating_Max_clique
 CREATE_FILE=
 DELETE_TMP_FILE=
 else

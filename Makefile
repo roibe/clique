@@ -1,5 +1,5 @@
 #########################################################
-# User Section - Choose arguments to the program
+# User Section - Choose arguments for the program
 #########################################################
 THRESHOLD_VALUE= 0.9
 LOWER_BOUND= 5
@@ -29,7 +29,7 @@ RUNGTEST= $(VALGRIND) ./$(GTEST) gtest_test1.csv 0.9 5 8 $(CALCULATE_MAX_CLIQUE)
 endif
 
 ifeq ($(CALCULATE_|MAX_CLIQUE|),yes)
-CALCULATE_MAX_CLIQUE= calculating_Max_clique
+CALCULATE_MAX_CLIQUE= calculating_Max_clique_size
 CREATE_FILE=
 DELETE_TMP_FILE=
 else

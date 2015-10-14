@@ -1,14 +1,15 @@
 #########################################################
 # User Section - Choose arguments to the program
 #########################################################
-THRESHOLD_VALUE= 0.53
-LOWER_BOUND= 23
-UPPER_BOUND= 24
+THRESHOLD_VALUE= 0.9
+LOWER_BOUND= 5
+UPPER_BOUND= 8
 INPUT_FILE= $(INPUT_FILE_1)
 #yes or no
-CALCULATE_|MAX_CLIQUE|=yes
-RUN_GTEST=no
+CALCULATE_|MAX_CLIQUE|=no
+RUN_GTEST=yes
 MEMORY_LEAK_CHECK=no
+PROFILER_OUTPUT=yes
 
 #########################################################
 # Input Files
@@ -20,8 +21,18 @@ INPUT_FILE_3= graph_2000V.dot
 #########################################################
 # Check passed arguments
 #########################################################
+ifeq ($(PROFILER_OUTPUT),yes)
+GPROF= gprof $(EXE) gmon.out > profiler.out
+GPROFFLAG= -pg
+else
+GPROF=
+GPROFFLAG=
+endif
+
 ifeq ($(MEMORY_LEAK_CHECK),yes) 
 VALGRIND= valgrind --leak-check=full -v
+GPROF=
+GPROFFLAG=
 endif
 
 ifeq ($(RUN_GTEST),yes) 
@@ -75,13 +86,14 @@ HEADERFILES= cliques.h
 ##########################################################
 all: $(EXE) $(GTEST)
 	time $(VALGRIND) ./$(EXE) $(INPUT_FILE) $(THRESHOLD_VALUE) $(LOWER_BOUND) $(UPPER_BOUND) $(CALCULATE_MAX_CLIQUE)
+	$(GPROF)
 	$(CREATE_FILE)
 	$(MOVE_FILE)
 	$(RUNGTEST)
 	$(DELETE_TMP_FILE)
 
 $(EXE): $(subst .c,.o,$(SRCSEXE))
-	$(CC) $(CFLAGS) $(COPTFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(COPTFLAGS) $(GPROFFLAG) $^ -o $@
 
 $(GTEST): $(subst .c,.o,$(SRCSEXENOMAIN)) $(subst .cpp,.o,$(SRCSTESTMAIN))
 	  $(CXX) $(CXXFLAGS) $^ -o $@ $(CXXTESTLINKFLAGS)

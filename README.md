@@ -82,10 +82,10 @@ threshold value= 0.55 , calculate |Max clique|
 ##Known Issues
 If you discover any bugs, feel free to create an issue on GitHub fork and send us a pull request.
 
-[Issues List.](https://github.com/roibenita/cliques/issues)
+[Issues List.](https://github.com/roibe/clique/issues)
 
 ##Authors
-- Roi Benita (https://github.com/roibenita)
+- Roi Benita (https://github.com/roibe)
 - Daniel Blank (https://github.com/danielblank1)
 - Ariel Hazan (https://github.com/Ariel3)
 - Netanel Ben-Haim

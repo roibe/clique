@@ -85,7 +85,7 @@ If you discover any bugs, feel free to create an issue on GitHub fork and send u
 [Issues List.](https://github.com/roibe/clique/issues)
 
 ##Authors
-- Roi Benita (https://github.com/roibe)
+- Roi Benitah (https://github.com/roibenitah)
 - Daniel Blank (https://github.com/danielblank1)
 - Ariel Hazan (https://github.com/Ariel3)
 - Netanel Ben-Haim
